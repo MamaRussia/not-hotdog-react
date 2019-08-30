@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { Header, Icon } from "react-native-elements";
 import * as Permissions from "expo-permissions";
+import UploadingOverlay from "./components/UploadingOverlay";
 
 const VISION_API_KEY = "AIzaSyDzhWT9l90szQEJeDgXexfEF0JCORaufYs";
 
@@ -17,7 +18,8 @@ class App extends Component {
   render() {
     const {
       hasGrantedCameraPermission,
-      hasGrantedCameraRollPermission
+      hasGrantedCameraRollPermission,
+      uploading
     } = this.state;
     if (
       hasGrantedCameraPermission === true &&
@@ -50,9 +52,13 @@ class App extends Component {
               </TouchableOpacity>
             }
           />
+          {uploading ? <UploadingOverlay /> : null}
         </View>
       );
     }
+    
+     
+   
   }
 }
 
