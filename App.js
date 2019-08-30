@@ -11,25 +11,28 @@ const VISION_API_KEY = "AIzaSyDzhWT9l90szQEJeDgXexfEF0JCORaufYs";
 
 async function uploadImagesAsync(uri) {
   const blob = await new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest()
-    xhr.onload = function () {
-      resolve(xhr.response)
-    }
-    xhr.onerror = function (e) {
+    const xhr = new XMLHttpRequest();
+    xhr.onload = function() {
+      resolve(xhr.response);
+    };
+    xhr.onerror = function(e) {
       console.log(e);
-      reject(new TypeError("Network request failed"))
-    }
-    xhr.responseType = "blob"
-    xhr.open("GET", uri, true)
-    xhr.send(null)
-  })
+      reject(new TypeError("Network request failed"));
+    };
+    xhr.responseType = "blob";
+    xhr.open("GET", uri, true);
+    xhr.send(null);
+  });
 
-  const ref = firebase.storage().ref().child(uuid.v4())
-  const snapshot = await ref.put(blob)
+  const ref = firebase
+    .storage()
+    .ref()
+    .child(uuid.v4());
+  const snapshot = await ref.put(blob);
 
-  blob.close()
+  blob.close();
 
-  return await snapshot.ref.getDownloadURL()
+  return await snapshot.ref.getDownloadURL();
 }
 class App extends Component {
   state = {
@@ -57,11 +60,53 @@ class App extends Component {
     let pickerResult = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
       aspect: [16, 9]
-    })
-    this.handleImagePicked(pickerResult)
+    });
+    this.handleImagePicked(pickerResult);
   };
 
- 
+  submitToGoogle = async () => {
+    try {
+      this.setState({ uploading: true });
+      let { image } = this.state;
+      let body = JSON.stringify({
+        requests: [
+          {
+            features: [{ type: "LABEL_DETECTION", maxResults: 7 }],
+            image: {
+              source: {
+                imageUri: image
+              }
+            }
+          }
+        ]
+      });
+      let response = await fetch(
+        "https://vision.googleapis.com/v1/images:annotate?key=${VISION_API_KEY}",
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+          },
+          method: "POST",
+          body: body
+        }
+      );
+      let responseJson = await response.json();
+      const getLabel = responseJson.responses[0].labelAnnotations.map(
+        obj => obj.description
+      );
+      let result =
+        getLabel.includes("Hot dog") ||
+        getLabel.includes("hot dog") ||
+        getLabel.includes("Hot dog bun");
+      this.setState({
+        googleResponse: result,
+        uploading: false
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   render() {
     const {
