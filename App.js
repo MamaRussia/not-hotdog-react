@@ -1,6 +1,8 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+const VISION_API_KEY = "AIzaSyDzhWT9l90szQEJeDgXexfEF0JCORaufYs";
+
 export default function App() {
   return (
     <View style={styles.container}>
