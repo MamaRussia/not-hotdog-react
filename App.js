@@ -1,21 +1,40 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { Component } from "react";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { Header, Icon } from "react-native-elements";
+import * as Permissions from "expo-permissions";
 
 const VISION_API_KEY = "AIzaSyDzhWT9l90szQEJeDgXexfEF0JCORaufYs";
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-    </View>
-  );
+class App extends Component {
+  state = {
+    hasGrantedCameraPermission: false,
+    hasGrantedCameraRollPermission: false
+  };
+  render() {
+    const {
+      hasGrantedCameraPermission,
+      hasGrantedCameraRollPermission
+    } = this.state;
+    if (
+      hasGrantedCameraPermission === false &&
+      hasGrantedCameraRollPermission === false
+    ) {
+      return (
+        <View style={{ flex: 1, marginTop: 100 }}>
+          <Text>No access to Camera or Gallery!</Text>
+        </View>
+      );
+    } else {
+      return <View style={styles.container}>{}</View>;
+    }
+  }
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+    backgroundColor: "#fff"
+  }
 });
+
+export default App;
