@@ -16,8 +16,8 @@ class App extends Component {
       hasGrantedCameraRollPermission
     } = this.state;
     if (
-      hasGrantedCameraPermission === false &&
-      hasGrantedCameraRollPermission === false
+      hasGrantedCameraPermission === true &&
+      hasGrantedCameraRollPermission === true
     ) {
       return (
         <View style={{ flex: 1, marginTop: 100 }}>
@@ -25,7 +25,29 @@ class App extends Component {
         </View>
       );
     } else {
-      return <View style={styles.container}>{}</View>;
+      return (
+        <View style={styles.container}>
+          {}
+          <Header
+            statusBarProps={{ barStyle: "light-content" }}
+            backgroundColor="black"
+            leftComponent={
+              <TouchableOpacity onPress={() => alert("soon")}>
+                <Icon name="photo-album" color="#fff" />
+              </TouchableOpacity>
+            }
+            centerComponent={{
+              text: "Not Hotdog?",
+              style: { color: "#fff", fontSize: 20, fontWeight: "bold" }
+            }}
+            rightComponent={
+              <TouchableOpacity onPress={() => alert("soon")}>
+                <Icon name="camera-alt" color="#fff" />
+              </TouchableOpacity>
+            }
+          />
+        </View>
+      );
     }
   }
 }
