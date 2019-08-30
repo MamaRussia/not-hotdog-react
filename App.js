@@ -10,6 +10,10 @@ class App extends Component {
     hasGrantedCameraPermission: false,
     hasGrantedCameraRollPermission: false
   };
+
+  state = {
+    uploading: false
+  };
   render() {
     const {
       hasGrantedCameraPermission,
