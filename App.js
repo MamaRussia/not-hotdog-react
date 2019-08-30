@@ -9,6 +9,28 @@ import uuid from "uuid";
 
 const VISION_API_KEY = "AIzaSyDzhWT9l90szQEJeDgXexfEF0JCORaufYs";
 
+async function uploadImagesAsync(uri) {
+  const blob = await new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest()
+    xhr.onload = function () {
+      resolve(xhr.response)
+    }
+    xhr.onerror = function (e) {
+      console.log(e);
+      reject(new TypeError("Network request failed"))
+    }
+    xhr.responseType = "blob"
+    xhr.open("GET", uri, true)
+    xhr.send(null)
+  })
+
+  const ref = firebase.storage().ref().child(uuid.v4())
+  const snapshot = await ref.put(blob)
+
+  blob.close()
+
+  return await snapshot.ref.getDownloadURL()
+}
 class App extends Component {
   state = {
     hasGrantedCameraPermission: false,
@@ -48,8 +70,8 @@ class App extends Component {
       uploading
     } = this.state;
     if (
-      hasGrantedCameraPermission === false &&
-      hasGrantedCameraRollPermission === false
+      hasGrantedCameraPermission === true &&
+      hasGrantedCameraRollPermission === true
     ) {
       return (
         <View style={{ flex: 1, marginTop: 100 }}>
@@ -64,7 +86,7 @@ class App extends Component {
             statusBarProps={{ barStyle: "light-content" }}
             backgroundColor="black"
             leftComponent={
-              <TouchableOpacity onPress={() => alert("soon")}>
+              <TouchableOpacity onPress={this.pickImage}>
                 <Icon name="photo-album" color="#fff" />
               </TouchableOpacity>
             }
@@ -73,7 +95,7 @@ class App extends Component {
               style: { color: "#fff", fontSize: 20, fontWeight: "bold" }
             }}
             rightComponent={
-              <TouchableOpacity onPress={() => alert("soon")}>
+              <TouchableOpacity onPress={this.takePhoto}>
                 <Icon name="camera-alt" color="#fff" />
               </TouchableOpacity>
             }
